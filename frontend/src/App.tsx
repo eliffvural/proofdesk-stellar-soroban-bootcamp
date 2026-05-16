@@ -88,7 +88,29 @@ export default function App() {
   const walletLabel = connected ? shortAddress(address) : "Not connected";
   const client = useMemo(() => createProofDeskClient(address), [address]);
   const selectedHash = verifyHash || proofHash;
-  const proofState = verified === null ? "Ready" : verified ? "Valid" : "Invalid";
+  const proofState =
+    verified === null ? "Not checked" : verified ? "Valid proof" : "Not valid";
+  const canCreate = connected && Boolean(documentText.trim()) && !isBusy;
+  const canVerify =
+    connected && Boolean(verifyOwner.trim()) && Boolean(verifyHash.trim()) && !isBusy;
+  const canRevoke = connected && Boolean(selectedHash) && !isBusy;
+  const flowSteps = [
+    {
+      label: "Wallet",
+      value: connected ? "Connected" : "Connect first",
+      done: connected,
+    },
+    {
+      label: "Fingerprint",
+      value: proofHash ? "Generated" : "Waiting",
+      done: Boolean(proofHash),
+    },
+    {
+      label: "Verification",
+      value: proofState,
+      done: verified === true,
+    },
+  ];
 
   const refreshStats = useCallback(
     async (walletAddress = address) => {
@@ -167,6 +189,9 @@ export default function App() {
     const hash = `sha256:${await sha256(documentText)}`;
     setProofHash(hash);
     setVerifyHash(hash);
+    if (address) setVerifyOwner(address);
+    setActiveProof(null);
+    setVerified(null);
     setStatus("Document fingerprint generated");
     return hash;
   }
@@ -260,8 +285,12 @@ export default function App() {
   }
 
   async function copy(value: string, label: string) {
-    await navigator.clipboard.writeText(value);
-    setStatus(`${label} copied`);
+    try {
+      await navigator.clipboard.writeText(value);
+      setStatus(`${label} copied`);
+    } catch {
+      setStatus(`${label} is ready to copy`);
+    }
   }
 
   return (
@@ -303,6 +332,18 @@ export default function App() {
 
       {error && <div className="error">{error}</div>}
 
+      <section className="flow-panel">
+        {flowSteps.map((step, index) => (
+          <div className={step.done ? "flow-step done" : "flow-step"} key={step.label}>
+            <span>{index + 1}</span>
+            <div>
+              <strong>{step.label}</strong>
+              <small>{step.value}</small>
+            </div>
+          </div>
+        ))}
+      </section>
+
       <section className="overview">
         <article className="certificate">
           <div className="certificate-top">
@@ -341,14 +382,14 @@ export default function App() {
         <article className="panel create-panel">
           <div className="panel-heading">
             <div>
-              <p className="eyebrow">Create Proof</p>
-              <h3>Anchor a private document fingerprint</h3>
+              <p className="eyebrow">Step 1</p>
+              <h3>Create document proof</h3>
             </div>
             <BadgeCheck size={20} />
           </div>
 
           <label>
-            Proof title
+            Document title
             <input
               value={title}
               onChange={(event) => setTitle(event.target.value)}
@@ -357,13 +398,32 @@ export default function App() {
           </label>
 
           <label>
-            Document text
+            Document content
             <textarea
               value={documentText}
-              onChange={(event) => setDocumentText(event.target.value)}
-              placeholder="Paste document text or metadata. Only the hash is stored."
+              onChange={(event) => {
+                setDocumentText(event.target.value);
+                setProofHash("");
+                setVerified(null);
+                setActiveProof(null);
+              }}
+              placeholder="Paste text or document metadata"
             />
           </label>
+
+          <div className="field-hint">
+            The document stays local. ProofDesk only sends the SHA-256 fingerprint.
+          </div>
+
+          <button
+            className="hash-box"
+            onClick={() => proofHash && copy(proofHash, "Proof hash")}
+            disabled={!proofHash}
+            type="button"
+          >
+            <span>{proofHash || "Generated fingerprint will appear here"}</span>
+            {proofHash && <Copy size={15} />}
+          </button>
 
           <div className="button-row">
             <button
@@ -373,41 +433,41 @@ export default function App() {
               type="button"
             >
               <Fingerprint size={18} />
-              Generate hash
+              Generate fingerprint
             </button>
             <button
               className="primary-button"
               onClick={createProof}
-              disabled={!connected || isBusy}
+              disabled={!canCreate}
               type="button"
             >
               {isBusy ? <Loader2 className="spin" size={18} /> : <ShieldCheck size={18} />}
-              Create proof
+              Generate & save proof
             </button>
           </div>
-
-          <button
-            className="hash-box"
-            onClick={() => proofHash && copy(proofHash, "Proof hash")}
-            disabled={!proofHash}
-            type="button"
-          >
-            <span>{proofHash || "No hash generated yet"}</span>
-            {proofHash && <Copy size={15} />}
-          </button>
         </article>
 
         <article className="panel verify-panel">
           <div className="panel-heading">
             <div>
-              <p className="eyebrow">Verify Proof</p>
-              <h3>Check authenticity and revoke status</h3>
+              <p className="eyebrow">Step 2</p>
+              <h3>Verify or revoke proof</h3>
             </div>
             {verified ? <CheckCircle2 size={20} /> : <ShieldAlert size={20} />}
           </div>
 
           <label>
-            Owner wallet
+            <span className="label-row">
+              Owner wallet
+              <button
+                className="tiny-button"
+                onClick={() => address && setVerifyOwner(address)}
+                disabled={!connected}
+                type="button"
+              >
+                Use my wallet
+              </button>
+            </span>
             <input
               value={verifyOwner}
               onChange={(event) => setVerifyOwner(event.target.value)}
@@ -416,7 +476,17 @@ export default function App() {
           </label>
 
           <label>
-            Proof hash
+            <span className="label-row">
+              Proof fingerprint
+              <button
+                className="tiny-button"
+                onClick={() => proofHash && setVerifyHash(proofHash)}
+                disabled={!proofHash}
+                type="button"
+              >
+                Use generated hash
+              </button>
+            </span>
             <input
               value={verifyHash}
               onChange={(event) => setVerifyHash(event.target.value)}
@@ -428,24 +498,28 @@ export default function App() {
             <button
               className="secondary-button"
               onClick={() => verifyProof()}
-              disabled={!connected || isBusy}
+              disabled={!canVerify}
               type="button"
             >
               {verified ? <CheckCircle2 size={18} /> : <Fingerprint size={18} />}
-              Verify
+              Verify proof
             </button>
             <button
               className="danger-button"
               onClick={revokeProof}
-              disabled={!connected || isBusy || !selectedHash}
+              disabled={!canRevoke}
               type="button"
             >
               <XCircle size={18} />
-              Revoke
+              Revoke my proof
             </button>
           </div>
 
-          <div className={verified ? "proof-result valid" : "proof-result"}>
+          <div
+            className={
+              verified ? "proof-result valid" : verified === false ? "proof-result invalid" : "proof-result"
+            }
+          >
             <strong>{proofState}</strong>
             <span>
               {activeProof
