@@ -6,20 +6,34 @@ ProofDesk is a Stellar Soroban dApp for creating, revoking, and verifying on-cha
 
 - ProofDesk Stellar
 
-## Who Are You
+## About Me
 
 - name: Elif Vural
 - Building with Stellar Soroban
 - Interested in proof, verification, and privacy-friendly blockchain use cases
 - Creating bootcamp-ready smart contract projects with polished frontends
+- Learning how to connect smart contract logic with useful product flows
 
 ## Project Details
 
-ProofDesk lets users create tamper-resistant document proofs on Stellar Testnet. The app does not upload or store files. Instead, it creates a SHA-256 fingerprint from document text and stores that fingerprint with a title, owner wallet, timestamp, and active/revoked status in a Soroban smart contract. Anyone can verify whether a proof is valid for a specific wallet and hash. The owner can also revoke a proof if it should no longer be trusted.
+ProofDesk lets users create tamper-resistant document proofs on Stellar Testnet. The app does not upload or store files. Instead, it creates a SHA-256 fingerprint from document text and stores that fingerprint with a title, owner wallet, timestamp, and active or revoked status in a Soroban smart contract. Anyone can verify whether a proof is valid for a specific wallet and hash. The owner can also revoke a proof if it should no longer be trusted.
 
 ## Vision
 
 ProofDesk shows how blockchain can prove that a document existed at a specific time without exposing private document content. This can support certificates, agreements, invoices, workshop completion records, and audit trails. By storing only cryptographic fingerprints, ProofDesk keeps documents private while making verification public, transparent, and wallet-owned.
+
+## Development Plan
+
+1. Create Soroban storage keys for proof records, owner proof counts, total proof count, and proof status.
+2. Add `create_proof(owner, proof_hash, title)` with wallet authorization and duplicate-proof protection.
+3. Add verification and read functions: `verify_proof(owner, proof_hash)`, `get_proof(owner, proof_hash)`, `get_proof_count(owner)`, and `get_total_proofs()`.
+4. Add `revoke_proof(owner, proof_hash)` so the owner can mark a proof as inactive without deleting the record.
+5. Build the React frontend with Freighter wallet connection, local SHA-256 hashing, create proof, verify proof, revoke proof, and proof stats screens.
+6. Test, build, generate TypeScript bindings, deploy the contract to Stellar Testnet, and connect the deployed contract ID to the frontend.
+
+## Personal Story
+
+I built ProofDesk to create a more practical smart contract project than a simple counter. It helped me understand how blockchain can verify real-world information while keeping private data off-chain. The project connects wallet authorization, hash generation, Soroban storage, and a clear frontend workflow.
 
 ## Smart Contract Functions
 
@@ -34,7 +48,7 @@ ProofDesk shows how blockchain can prove that a document existed at a specific t
 
 - Network: Stellar Testnet
 - Contract ID: `CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI`
-- Explorer: https://stellar.expert/explorer/testnet/contract/CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI
+- Explorer: <https://stellar.expert/explorer/testnet/contract/CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI>
 
 ## Tech Stack
 
@@ -88,26 +102,9 @@ Open:
 http://localhost:4325
 ```
 
-## ChatGPT Prompt 1
+## Visual Concept
 
-Write me a project description, in less than 150 simple, straightforward words, for a blockchain project on Stellar. The project lets users create, verify, and revoke document proofs by storing SHA-256 hashes on-chain.
-
-## ChatGPT Prompt 2
-
-Now, also write a vision statement, in 100 simple, straightforward words, for this project. Talk about privacy-friendly document verification and public proof ownership.
-
-## ChatGPT Prompt 3
-
-Now, write me a software development plan for this project. Mainly focus on smart contract functions, variables, and features. Then mention the frontend. Keep it under 6 steps. Final step can be deployment.
-
-## ChatGPT Prompt 4
-
-Now, write a personal story summary in less than 100 words about building a Stellar document proof dApp as a practical smart contract project.
-
-## ChatGPT Prompt 5
-
-Can you also write a draft GitHub README on how to install the project?
-
-## ImgCreator Prompt
-
-Futuristic premium digital painting with a calm robot archivist mascot inside a bright verification office, holographic documents, glowing Stellar blockchain seals, precise proof validation.
+- Mascot: calm robot archivist
+- Setting: bright verification office
+- Physical keywords: validating proofs, organizing holographic documents, sealing trusted records
+- Art direction: futuristic premium digital painting with glowing Stellar blockchain seals, precise proof validation, and a clean professional mood
