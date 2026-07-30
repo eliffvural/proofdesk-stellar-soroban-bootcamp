@@ -18,6 +18,24 @@ ProofDesk is a Stellar Soroban dApp for creating, revoking, and verifying on-cha
 
 ProofDesk lets users create tamper-resistant document proofs on Stellar Testnet. The app does not upload or store files. Instead, it creates a SHA-256 fingerprint from document text and stores that fingerprint with a title, owner wallet, timestamp, and active or revoked status in a Soroban smart contract. Anyone can verify whether a proof is valid for a specific wallet and hash. The owner can also revoke a proof if it should no longer be trusted.
 
+## Level 4 MVP Highlights
+
+- Production-minded onboarding flow for Freighter, Testnet checks, fingerprinting, proof creation, verification, revocation, and feedback.
+- Responsive React interface with loading states, disabled states, explicit error messages, and a monitored error boundary.
+- Privacy-friendly analytics and monitoring event store with optional hosted endpoints.
+- Exportable Level 4 evidence snapshot for wallet interactions, analytics events, monitoring issues, and feedback.
+- Static deployment-ready Vite build with environment variables for RPC, analytics, feedback, and monitoring.
+
+## Product Validation Flow
+
+1. Ask each tester to connect a Freighter Testnet wallet.
+2. Create or verify at least one document proof.
+3. Save one feedback response in the Level 4 Launch panel.
+4. Export the Level 4 evidence JSON from the app.
+5. Add real wallet interaction links and feedback summary to `docs/LEVEL4_SUBMISSION.md`.
+
+Do not fabricate the 10-user proof requirement. Submit only real wallets and real feedback collected from testers.
+
 ## Vision
 
 ProofDesk shows how blockchain can prove that a document existed at a specific time without exposing private document content. This can support certificates, agreements, invoices, workshop completion records, and audit trails. By storing only cryptographic fingerprints, ProofDesk keeps documents private while making verification public, transparent, and wallet-owned.
@@ -49,6 +67,15 @@ I built ProofDesk to create a more practical smart contract project than a simpl
 - Network: Stellar Testnet
 - Contract ID: `CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI`
 - Explorer: <https://stellar.expert/explorer/testnet/contract/CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI>
+
+## Level 4 Submission
+
+The submission tracker is in [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md). It includes the live demo/video placeholders, screenshot list, 10-user wallet evidence table, feedback summary template, and verification commands.
+
+Supporting guides:
+
+- [`docs/USER_TESTING_SCRIPT.md`](docs/USER_TESTING_SCRIPT.md)
+- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)
 
 ## Tech Stack
 
@@ -100,6 +127,45 @@ Open:
 
 ```bash
 http://localhost:4325
+```
+
+## Environment Variables
+
+Copy `frontend/.env.example` to `frontend/.env` for local overrides.
+
+```bash
+VITE_SOROBAN_RPC_URL=https://soroban-testnet.stellar.org
+VITE_ANALYTICS_ENDPOINT=
+VITE_FEEDBACK_ENDPOINT=
+VITE_MONITORING_ENDPOINT=
+```
+
+The analytics, feedback, and monitoring endpoints are optional. When left empty, ProofDesk stores validation data locally in the browser and the evidence export still works.
+
+## Production Deployment
+
+The repository includes a GitHub Pages workflow at `.github/workflows/pages.yml`.
+After the changes are pushed to `main`, the live app should be available at:
+
+<https://eliffvural.github.io/proofdesk-stellar-soroban-bootcamp/>
+
+For any static host that supports Vite builds:
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+Publish `frontend/dist` and set `VITE_SOROBAN_RPC_URL` to the Stellar Testnet RPC URL. After deployment, add the final demo video URL to `docs/LEVEL4_SUBMISSION.md`.
+
+## Verification
+
+```bash
+cargo test
+cd frontend
+npm audit --omit=dev
+npm run build
 ```
 
 ## Visual Concept
