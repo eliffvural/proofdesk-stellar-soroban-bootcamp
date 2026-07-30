@@ -1,18 +1,25 @@
 import {
+  Activity,
   BadgeCheck,
+  BarChart3,
   CheckCircle2,
+  ClipboardCheck,
   Copy,
+  Download,
   ExternalLink,
   FileLock2,
   Fingerprint,
   Loader2,
+  MessageSquare,
+  Radar,
   RefreshCw,
   ShieldAlert,
   ShieldCheck,
+  UsersRound,
   Wallet,
   XCircle,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   getAddress,
   getNetworkDetails,
@@ -25,6 +32,23 @@ import {
   NETWORK_PASSPHRASE,
 } from "./lib/proofdesk";
 import type { Proof } from "./lib/proofdesk";
+import {
+  buildSubmissionSnapshot,
+  captureError,
+  getAnalyticsEvents,
+  getFeedbackItems,
+  getMonitoringIssues,
+  getWalletInteractions,
+  recordWalletInteraction,
+  submitFeedback,
+  trackEvent,
+} from "./lib/productOps";
+import type {
+  AnalyticsEvent,
+  FeedbackItem,
+  MonitoringIssue,
+  WalletInteraction,
+} from "./lib/productOps";
 
 const explorerUrl = `https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}`;
 const labUrl = `https://lab.stellar.org/r/testnet/contract/${CONTRACT_ID}`;
@@ -68,6 +92,36 @@ function formatDate(timestamp: number | bigint) {
   }).format(new Date(seconds * 1000));
 }
 
+function getReceiptField(receipt: unknown, key: string) {
+  if (!receipt || typeof receipt !== "object" || !(key in receipt)) return "";
+  const value = (receipt as Record<string, unknown>)[key];
+  return typeof value === "string" ? value : "";
+}
+
+function getTransactionHash(receipt: unknown) {
+  return (
+    getReceiptField(receipt, "hash") ||
+    getReceiptField(receipt, "transactionHash") ||
+    getReceiptField(receipt, "txHash")
+  );
+}
+
+function transactionExplorerUrl(hash: string) {
+  return hash ? `https://stellar.expert/explorer/testnet/tx/${hash}` : explorerUrl;
+}
+
+function downloadJson(filename: string, payload: unknown) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function App() {
   const [address, setAddress] = useState("");
   const [network, setNetwork] = useState("TESTNET");
@@ -83,6 +137,24 @@ export default function App() {
   const [status, setStatus] = useState("Connect Freighter to create proofs");
   const [error, setError] = useState("");
   const [isBusy, setIsBusy] = useState(false);
+  const [feedbackName, setFeedbackName] = useState("");
+  const [feedbackUseCase, setFeedbackUseCase] = useState("Certificate verification");
+  const [feedbackRating, setFeedbackRating] = useState(5);
+  const [feedbackNotes, setFeedbackNotes] = useState("");
+  const [opsMessage, setOpsMessage] = useState("Validation dashboard is ready");
+  const [analyticsEvents, setAnalyticsEvents] = useState<AnalyticsEvent[]>(() =>
+    getAnalyticsEvents(),
+  );
+  const [walletInteractions, setWalletInteractions] = useState<WalletInteraction[]>(() =>
+    getWalletInteractions(),
+  );
+  const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>(() =>
+    getFeedbackItems(),
+  );
+  const [monitoringIssues, setMonitoringIssues] = useState<MonitoringIssue[]>(() =>
+    getMonitoringIssues(),
+  );
+  const didTrackLoad = useRef(false);
 
   const connected = Boolean(address);
   const walletLabel = connected ? shortAddress(address) : "Not connected";
@@ -94,6 +166,20 @@ export default function App() {
   const canVerify =
     connected && Boolean(verifyOwner.trim()) && Boolean(verifyHash.trim()) && !isBusy;
   const canRevoke = connected && Boolean(selectedHash) && !isBusy;
+  const uniqueWalletCount = new Set(walletInteractions.map((item) => item.wallet)).size;
+  const signedInteractionCount = walletInteractions.filter(
+    (item) => item.action !== "verify_proof",
+  ).length;
+  const validationProgress = Math.min(100, Math.round((uniqueWalletCount / 10) * 100));
+  const latestInteraction = walletInteractions[walletInteractions.length - 1];
+  const latestFeedback = feedbackItems[feedbackItems.length - 1];
+  const averageFeedback =
+    feedbackItems.length === 0
+      ? "0.0"
+      : (
+          feedbackItems.reduce((total, item) => total + item.rating, 0) /
+          feedbackItems.length
+        ).toFixed(1);
   const flowSteps = [
     {
       label: "Wallet",
@@ -111,6 +197,42 @@ export default function App() {
       done: verified === true,
     },
   ];
+  const onboardingTasks = [
+    {
+      label: "Testnet wallet",
+      value: connected ? walletLabel : "Waiting",
+      done: connected,
+    },
+    {
+      label: "Fingerprint",
+      value: proofHash ? "Ready" : "Pending",
+      done: Boolean(proofHash),
+    },
+    {
+      label: "On-chain proof",
+      value: signedInteractionCount ? `${signedInteractionCount} signed` : "No signed tx",
+      done: signedInteractionCount > 0,
+    },
+    {
+      label: "Feedback",
+      value: feedbackItems.length ? `${feedbackItems.length} responses` : "Collect after demo",
+      done: feedbackItems.length > 0,
+    },
+  ];
+
+  const syncOpsState = useCallback(() => {
+    setAnalyticsEvents(getAnalyticsEvents());
+    setWalletInteractions(getWalletInteractions());
+    setFeedbackItems(getFeedbackItems());
+    setMonitoringIssues(getMonitoringIssues());
+  }, []);
+
+  useEffect(() => {
+    if (didTrackLoad.current) return;
+    didTrackLoad.current = true;
+    trackEvent("app_loaded", { contractId: CONTRACT_ID, network: "testnet" });
+    syncOpsState();
+  }, [syncOpsState]);
 
   const refreshStats = useCallback(
     async (walletAddress = address) => {
@@ -173,8 +295,15 @@ export default function App() {
       }
 
       setStatus("Wallet connected");
+      trackEvent("wallet_connected", {
+        wallet: walletAddress,
+        network,
+      });
+      syncOpsState();
     } catch (nextError) {
       setError(readError(nextError));
+      captureError(nextError, { action: "connect_wallet" });
+      syncOpsState();
     } finally {
       setIsBusy(false);
     }
@@ -193,6 +322,11 @@ export default function App() {
     setActiveProof(null);
     setVerified(null);
     setStatus("Document fingerprint generated");
+    trackEvent("fingerprint_generated", {
+      proofHash: hash,
+      characterCount: documentText.length,
+    });
+    syncOpsState();
     return hash;
   }
 
@@ -213,16 +347,31 @@ export default function App() {
         title: title.trim() || "Untitled Proof",
       });
       const sent = await tx.signAndSend();
+      const txHash = getTransactionHash(sent);
 
       setOwnerProofCount(Number(sent.result));
       setVerifyOwner(address);
       setVerifyHash(hash);
+      recordWalletInteraction({
+        action: "create_proof",
+        wallet: address,
+        proofHash: hash,
+        contractId: CONTRACT_ID,
+        network,
+        title: title.trim() || "Untitled Proof",
+        transactionHash: txHash,
+        explorerUrl: transactionExplorerUrl(txHash),
+        result: String(sent.result),
+      });
       await refreshStats(address);
       await verifyProof(address, hash);
       setStatus("Proof anchored on Stellar Testnet");
+      syncOpsState();
     } catch (nextError) {
       setError(readError(nextError));
       setStatus("Proof could not be created");
+      captureError(nextError, { action: "create_proof", wallet: address });
+      syncOpsState();
     } finally {
       setIsBusy(false);
     }
@@ -247,8 +396,21 @@ export default function App() {
       setVerified(Boolean(verifyTx.result));
       setActiveProof(proofTx.result);
       setStatus(Boolean(verifyTx.result) ? "Proof verified" : "Proof not active");
+      recordWalletInteraction({
+        action: "verify_proof",
+        wallet: owner,
+        proofHash: hash,
+        contractId: CONTRACT_ID,
+        network,
+        title: proofTx.result.title,
+        result: Boolean(verifyTx.result) ? "valid" : "inactive",
+        explorerUrl,
+      });
+      syncOpsState();
     } catch (nextError) {
       setError(readError(nextError));
+      captureError(nextError, { action: "verify_proof", wallet: owner });
+      syncOpsState();
     } finally {
       setIsBusy(false);
     }
@@ -267,18 +429,33 @@ export default function App() {
         proof_hash: selectedHash,
       });
       const sent = await tx.signAndSend();
+      const txHash = getTransactionHash(sent);
 
       setVerified(false);
       await refreshStats(address);
+      recordWalletInteraction({
+        action: "revoke_proof",
+        wallet: address,
+        proofHash: selectedHash,
+        contractId: CONTRACT_ID,
+        network,
+        title: activeProof?.title ?? title,
+        transactionHash: txHash,
+        explorerUrl: transactionExplorerUrl(txHash),
+        result: sent.result ? "revoked" : "inactive_or_missing",
+      });
       if (sent.result) {
         await verifyProof(address, selectedHash);
         setStatus("Proof revoked");
       } else {
         setStatus("Proof was already inactive or not found");
       }
+      syncOpsState();
     } catch (nextError) {
       setError(readError(nextError));
       setStatus("Proof could not be revoked");
+      captureError(nextError, { action: "revoke_proof", wallet: address });
+      syncOpsState();
     } finally {
       setIsBusy(false);
     }
@@ -291,6 +468,35 @@ export default function App() {
     } catch {
       setStatus(`${label} is ready to copy`);
     }
+  }
+
+  function saveFeedback() {
+    if (!feedbackNotes.trim()) {
+      setOpsMessage("Add one sentence of user feedback before saving.");
+      return;
+    }
+
+    submitFeedback({
+      wallet: address || verifyOwner || "Wallet not connected",
+      name: feedbackName.trim() || "Anonymous tester",
+      useCase: feedbackUseCase.trim() || "Document proof",
+      rating: feedbackRating,
+      notes: feedbackNotes.trim(),
+    });
+    setFeedbackNotes("");
+    setOpsMessage("Feedback saved for Level 4 validation");
+    syncOpsState();
+  }
+
+  function exportEvidence() {
+    downloadJson("proofdesk-level4-evidence.json", buildSubmissionSnapshot());
+    trackEvent("evidence_exported", {
+      uniqueWallets: uniqueWalletCount,
+      interactionCount: walletInteractions.length,
+      feedbackCount: feedbackItems.length,
+    });
+    syncOpsState();
+    setOpsMessage("Submission evidence exported");
   }
 
   return (
@@ -546,6 +752,156 @@ export default function App() {
             <a href={labUrl} target="_blank" rel="noreferrer">
               Stellar Lab <ExternalLink size={14} />
             </a>
+          </div>
+        </article>
+      </section>
+
+      <section className="launch-grid">
+        <article className="panel onboarding-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Level 4 Launch</p>
+              <h3>User onboarding</h3>
+            </div>
+            <ClipboardCheck size={20} />
+          </div>
+
+          <div className="validation-progress">
+            <div>
+              <strong>{uniqueWalletCount}/10</strong>
+              <span>real wallets onboarded</span>
+            </div>
+            <div className="progress-meter" aria-label="10 wallet onboarding progress">
+              <span style={{ width: `${validationProgress}%` }} />
+            </div>
+          </div>
+
+          <div className="onboarding-list">
+            {onboardingTasks.map((task) => (
+              <div className={task.done ? "check-row done" : "check-row"} key={task.label}>
+                {task.done ? <CheckCircle2 size={17} /> : <Radar size={17} />}
+                <div>
+                  <strong>{task.label}</strong>
+                  <span>{task.value}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="panel evidence-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Proof Pack</p>
+              <h3>Analytics and evidence</h3>
+            </div>
+            <BarChart3 size={20} />
+          </div>
+
+          <div className="ops-stats">
+            <div>
+              <Activity size={17} />
+              <span>Events</span>
+              <strong>{analyticsEvents.length}</strong>
+            </div>
+            <div>
+              <UsersRound size={17} />
+              <span>Interactions</span>
+              <strong>{walletInteractions.length}</strong>
+            </div>
+            <div>
+              <ShieldAlert size={17} />
+              <span>Issues</span>
+              <strong>{monitoringIssues.length}</strong>
+            </div>
+          </div>
+
+          <dl className="compact-list">
+            <div>
+              <dt>Last wallet action</dt>
+              <dd>
+                {latestInteraction
+                  ? `${latestInteraction.action.replace("_", " ")} / ${shortAddress(
+                      latestInteraction.wallet,
+                    )}`
+                  : "No wallet evidence yet"}
+              </dd>
+            </div>
+            <div>
+              <dt>Monitoring status</dt>
+              <dd>{monitoringIssues.length ? "Review captured issues" : "No runtime issues"}</dd>
+            </div>
+            <div>
+              <dt>Average feedback</dt>
+              <dd>
+                {averageFeedback}/5 from {feedbackItems.length} responses
+              </dd>
+            </div>
+          </dl>
+
+          <button className="secondary-button full-button" onClick={exportEvidence} type="button">
+            <Download size={18} />
+            Export Level 4 evidence
+          </button>
+        </article>
+
+        <article className="panel feedback-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">User Feedback</p>
+              <h3>Collect validation</h3>
+            </div>
+            <MessageSquare size={20} />
+          </div>
+
+          <label>
+            Tester name
+            <input
+              value={feedbackName}
+              onChange={(event) => setFeedbackName(event.target.value)}
+              placeholder="Name or team"
+            />
+          </label>
+
+          <label>
+            Use case
+            <input
+              value={feedbackUseCase}
+              onChange={(event) => setFeedbackUseCase(event.target.value)}
+              placeholder="Certificate verification"
+            />
+          </label>
+
+          <label>
+            Rating
+            <input
+              min="1"
+              max="5"
+              type="range"
+              value={feedbackRating}
+              onChange={(event) => setFeedbackRating(Number(event.target.value))}
+            />
+            <span className="rating-label">{feedbackRating}/5</span>
+          </label>
+
+          <label>
+            Feedback
+            <textarea
+              className="feedback-textarea"
+              value={feedbackNotes}
+              onChange={(event) => setFeedbackNotes(event.target.value)}
+              placeholder="What worked, what was confusing, and would you use this again?"
+            />
+          </label>
+
+          <button className="primary-button full-button" onClick={saveFeedback} type="button">
+            <MessageSquare size={18} />
+            Save feedback
+          </button>
+
+          <div className="ops-message">
+            <strong>{latestFeedback ? latestFeedback.name : "Ready"}</strong>
+            <span>{latestFeedback ? latestFeedback.notes : opsMessage}</span>
           </div>
         </article>
       </section>
