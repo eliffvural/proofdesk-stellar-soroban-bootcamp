@@ -507,7 +507,7 @@ export default function App() {
             <Fingerprint size={25} />
           </div>
           <div>
-            <p className="eyebrow">Stellar Soroban Verification Suite</p>
+            <p className="eyebrow">Private document proof</p>
             <h1>ProofDesk</h1>
           </div>
         </div>
@@ -559,7 +559,7 @@ export default function App() {
           <div className={verified ? "seal valid" : "seal"}>
             {verified ? <ShieldCheck size={42} /> : <FileLock2 size={42} />}
           </div>
-          <p className="eyebrow">Verification Certificate</p>
+          <p className="eyebrow">Proof Status</p>
           <h2>{activeProof?.title ?? title}</h2>
           <p>
             {activeProof?.proof_hash && activeProof.proof_hash !== "Not found"
@@ -589,7 +589,7 @@ export default function App() {
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Step 1</p>
-              <h3>Create document proof</h3>
+              <h3>Create proof</h3>
             </div>
             <BadgeCheck size={20} />
           </div>
@@ -604,7 +604,7 @@ export default function App() {
           </label>
 
           <label>
-            Document content
+            Document text
             <textarea
               value={documentText}
               onChange={(event) => {
@@ -618,7 +618,7 @@ export default function App() {
           </label>
 
           <div className="field-hint">
-            The document stays local. ProofDesk only sends the SHA-256 fingerprint.
+            Your document stays in your browser. Only the hash goes on-chain.
           </div>
 
           <button
@@ -639,7 +639,7 @@ export default function App() {
               type="button"
             >
               <Fingerprint size={18} />
-              Generate fingerprint
+              Generate hash
             </button>
             <button
               className="primary-button"
@@ -648,7 +648,7 @@ export default function App() {
               type="button"
             >
               {isBusy ? <Loader2 className="spin" size={18} /> : <ShieldCheck size={18} />}
-              Generate & save proof
+              Save proof
             </button>
           </div>
         </article>
@@ -657,7 +657,7 @@ export default function App() {
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Step 2</p>
-              <h3>Verify or revoke proof</h3>
+              <h3>Verify proof</h3>
             </div>
             {verified ? <CheckCircle2 size={20} /> : <ShieldAlert size={20} />}
           </div>
@@ -756,155 +756,167 @@ export default function App() {
         </article>
       </section>
 
-      <section className="launch-grid">
-        <article className="panel onboarding-panel">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Level 4 Launch</p>
-              <h3>User onboarding</h3>
-            </div>
-            <ClipboardCheck size={20} />
-          </div>
+      <details className="validation-drawer">
+        <summary>
+          <span>
+            <strong>Level 4 validation</strong>
+            <small>
+              {uniqueWalletCount}/10 wallets, {feedbackItems.length} feedback responses
+            </small>
+          </span>
+          <ClipboardCheck size={18} />
+        </summary>
 
-          <div className="validation-progress">
-            <div>
-              <strong>{uniqueWalletCount}/10</strong>
-              <span>real wallets onboarded</span>
-            </div>
-            <div className="progress-meter" aria-label="10 wallet onboarding progress">
-              <span style={{ width: `${validationProgress}%` }} />
-            </div>
-          </div>
-
-          <div className="onboarding-list">
-            {onboardingTasks.map((task) => (
-              <div className={task.done ? "check-row done" : "check-row"} key={task.label}>
-                {task.done ? <CheckCircle2 size={17} /> : <Radar size={17} />}
-                <div>
-                  <strong>{task.label}</strong>
-                  <span>{task.value}</span>
-                </div>
+        <section className="launch-grid">
+          <article className="panel onboarding-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">Level 4 Launch</p>
+                <h3>User onboarding</h3>
               </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="panel evidence-panel">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Proof Pack</p>
-              <h3>Analytics and evidence</h3>
+              <ClipboardCheck size={20} />
             </div>
-            <BarChart3 size={20} />
-          </div>
 
-          <div className="ops-stats">
-            <div>
-              <Activity size={17} />
-              <span>Events</span>
-              <strong>{analyticsEvents.length}</strong>
+            <div className="validation-progress">
+              <div>
+                <strong>{uniqueWalletCount}/10</strong>
+                <span>real wallets onboarded</span>
+              </div>
+              <div className="progress-meter" aria-label="10 wallet onboarding progress">
+                <span style={{ width: `${validationProgress}%` }} />
+              </div>
             </div>
-            <div>
-              <UsersRound size={17} />
-              <span>Interactions</span>
-              <strong>{walletInteractions.length}</strong>
+
+            <div className="onboarding-list">
+              {onboardingTasks.map((task) => (
+                <div className={task.done ? "check-row done" : "check-row"} key={task.label}>
+                  {task.done ? <CheckCircle2 size={17} /> : <Radar size={17} />}
+                  <div>
+                    <strong>{task.label}</strong>
+                    <span>{task.value}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div>
-              <ShieldAlert size={17} />
-              <span>Issues</span>
-              <strong>{monitoringIssues.length}</strong>
+          </article>
+
+          <article className="panel evidence-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">Proof Pack</p>
+                <h3>Analytics and evidence</h3>
+              </div>
+              <BarChart3 size={20} />
             </div>
-          </div>
 
-          <dl className="compact-list">
-            <div>
-              <dt>Last wallet action</dt>
-              <dd>
-                {latestInteraction
-                  ? `${latestInteraction.action.replace("_", " ")} / ${shortAddress(
-                      latestInteraction.wallet,
-                    )}`
-                  : "No wallet evidence yet"}
-              </dd>
+            <div className="ops-stats">
+              <div>
+                <Activity size={17} />
+                <span>Events</span>
+                <strong>{analyticsEvents.length}</strong>
+              </div>
+              <div>
+                <UsersRound size={17} />
+                <span>Interactions</span>
+                <strong>{walletInteractions.length}</strong>
+              </div>
+              <div>
+                <ShieldAlert size={17} />
+                <span>Issues</span>
+                <strong>{monitoringIssues.length}</strong>
+              </div>
             </div>
-            <div>
-              <dt>Monitoring status</dt>
-              <dd>{monitoringIssues.length ? "Review captured issues" : "No runtime issues"}</dd>
+
+            <dl className="compact-list">
+              <div>
+                <dt>Last wallet action</dt>
+                <dd>
+                  {latestInteraction
+                    ? `${latestInteraction.action.replace("_", " ")} / ${shortAddress(
+                        latestInteraction.wallet,
+                      )}`
+                    : "No wallet evidence yet"}
+                </dd>
+              </div>
+              <div>
+                <dt>Monitoring status</dt>
+                <dd>{monitoringIssues.length ? "Review captured issues" : "No runtime issues"}</dd>
+              </div>
+              <div>
+                <dt>Average feedback</dt>
+                <dd>
+                  {averageFeedback}/5 from {feedbackItems.length} responses
+                </dd>
+              </div>
+            </dl>
+
+            <button className="secondary-button full-button" onClick={exportEvidence} type="button">
+              <Download size={18} />
+              Export Level 4 evidence
+            </button>
+          </article>
+
+          <article className="panel feedback-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">User Feedback</p>
+                <h3>Collect validation</h3>
+              </div>
+              <MessageSquare size={20} />
             </div>
-            <div>
-              <dt>Average feedback</dt>
-              <dd>
-                {averageFeedback}/5 from {feedbackItems.length} responses
-              </dd>
+
+            <label>
+              Tester name
+              <input
+                value={feedbackName}
+                onChange={(event) => setFeedbackName(event.target.value)}
+                placeholder="Name or team"
+              />
+            </label>
+
+            <label>
+              Use case
+              <input
+                value={feedbackUseCase}
+                onChange={(event) => setFeedbackUseCase(event.target.value)}
+                placeholder="Certificate verification"
+              />
+            </label>
+
+            <label>
+              Rating
+              <input
+                min="1"
+                max="5"
+                type="range"
+                value={feedbackRating}
+                onChange={(event) => setFeedbackRating(Number(event.target.value))}
+              />
+              <span className="rating-label">{feedbackRating}/5</span>
+            </label>
+
+            <label>
+              Feedback
+              <textarea
+                className="feedback-textarea"
+                value={feedbackNotes}
+                onChange={(event) => setFeedbackNotes(event.target.value)}
+                placeholder="What worked, what was confusing, and would you use this again?"
+              />
+            </label>
+
+            <button className="primary-button full-button" onClick={saveFeedback} type="button">
+              <MessageSquare size={18} />
+              Save feedback
+            </button>
+
+            <div className="ops-message">
+              <strong>{latestFeedback ? latestFeedback.name : "Ready"}</strong>
+              <span>{latestFeedback ? latestFeedback.notes : opsMessage}</span>
             </div>
-          </dl>
-
-          <button className="secondary-button full-button" onClick={exportEvidence} type="button">
-            <Download size={18} />
-            Export Level 4 evidence
-          </button>
-        </article>
-
-        <article className="panel feedback-panel">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">User Feedback</p>
-              <h3>Collect validation</h3>
-            </div>
-            <MessageSquare size={20} />
-          </div>
-
-          <label>
-            Tester name
-            <input
-              value={feedbackName}
-              onChange={(event) => setFeedbackName(event.target.value)}
-              placeholder="Name or team"
-            />
-          </label>
-
-          <label>
-            Use case
-            <input
-              value={feedbackUseCase}
-              onChange={(event) => setFeedbackUseCase(event.target.value)}
-              placeholder="Certificate verification"
-            />
-          </label>
-
-          <label>
-            Rating
-            <input
-              min="1"
-              max="5"
-              type="range"
-              value={feedbackRating}
-              onChange={(event) => setFeedbackRating(Number(event.target.value))}
-            />
-            <span className="rating-label">{feedbackRating}/5</span>
-          </label>
-
-          <label>
-            Feedback
-            <textarea
-              className="feedback-textarea"
-              value={feedbackNotes}
-              onChange={(event) => setFeedbackNotes(event.target.value)}
-              placeholder="What worked, what was confusing, and would you use this again?"
-            />
-          </label>
-
-          <button className="primary-button full-button" onClick={saveFeedback} type="button">
-            <MessageSquare size={18} />
-            Save feedback
-          </button>
-
-          <div className="ops-message">
-            <strong>{latestFeedback ? latestFeedback.name : "Ready"}</strong>
-            <span>{latestFeedback ? latestFeedback.notes : opsMessage}</span>
-          </div>
-        </article>
-      </section>
+          </article>
+        </section>
+      </details>
     </main>
   );
 }

@@ -38,9 +38,9 @@ a {
 }
 
 .shell {
-  width: min(1240px, calc(100% - 34px));
+  width: min(1120px, calc(100% - 34px));
   margin: 0 auto;
-  padding: 26px 0 38px;
+  padding: 22px 0 34px;
 }
 
 .topbar,
@@ -113,15 +113,15 @@ h3 {
 
 h1 {
   color: #101816;
-  font-size: clamp(2.35rem, 6vw, 5.5rem);
-  line-height: 0.92;
+  font-size: clamp(2.15rem, 5vw, 4.4rem);
+  line-height: 0.96;
 }
 
 h2 {
   max-width: 780px;
   color: #ffffff;
-  font-size: clamp(2.35rem, 6vw, 5.65rem);
-  line-height: 0.92;
+  font-size: clamp(2rem, 4.8vw, 4.25rem);
+  line-height: 0.96;
 }
 
 h3 {
@@ -225,7 +225,7 @@ button:disabled {
 
 .overview {
   display: grid;
-  grid-template-columns: minmax(0, 1.42fr) minmax(280px, 0.58fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
   gap: 16px;
   margin-bottom: 16px;
 }
@@ -287,9 +287,9 @@ button:disabled {
 
 .certificate {
   position: relative;
-  min-height: 420px;
+  min-height: 320px;
   overflow: hidden;
-  padding: 24px;
+  padding: 22px;
   background:
     linear-gradient(116deg, rgba(255, 255, 255, 0.12), transparent 45%),
     repeating-linear-gradient(
@@ -310,7 +310,7 @@ button:disabled {
 .certificate-top {
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 62px;
+  margin-bottom: 42px;
 }
 
 .certificate-top span {
@@ -339,8 +339,8 @@ button:disabled {
   right: 24px;
   bottom: 24px;
   display: grid;
-  width: 150px;
-  height: 150px;
+  width: 112px;
+  height: 112px;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.34);
   border-radius: 50%;
@@ -361,7 +361,7 @@ button:disabled {
 
 .metrics div {
   display: grid;
-  min-height: 112px;
+  min-height: 92px;
   align-content: center;
   gap: 12px;
   border: 1px solid #e1ded4;
@@ -544,7 +544,59 @@ dd {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.05fr) minmax(0, 1.05fr);
   gap: 16px;
+  margin-top: 14px;
+}
+
+.validation-drawer {
+  border: 1px solid #d5d2c8;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
   margin-top: 16px;
+  padding: 0;
+  box-shadow: 0 12px 26px rgba(23, 32, 31, 0.05);
+}
+
+.validation-drawer > summary {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #0f665b;
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 16px;
+}
+
+.validation-drawer > summary::-webkit-details-marker {
+  display: none;
+}
+
+.validation-drawer > summary span {
+  display: grid;
+  gap: 3px;
+}
+
+.validation-drawer > summary strong {
+  color: #17201f;
+  font-size: 1rem;
+}
+
+.validation-drawer > summary small {
+  color: #68736d;
+  font-weight: 720;
+}
+
+.validation-drawer[open] {
+  padding-bottom: 16px;
+}
+
+.validation-drawer[open] > summary {
+  border-bottom: 1px solid #e2e8e8;
+}
+
+.validation-drawer .launch-grid {
+  padding: 0 16px;
 }
 
 .validation-progress {
@@ -767,7 +819,7 @@ input[type="range"] {
   }
 
   .certificate {
-    min-height: 460px;
+    min-height: 360px;
   }
 
   .metrics {
