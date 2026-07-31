@@ -28,7 +28,7 @@
 - [ ] Demo video link
 - [ ] 10+ real user wallet interactions
 - [ ] Final user feedback summary from real testers
-- [ ] 15+ meaningful commits in the public GitHub repository
+- [x] 15+ meaningful commits in the public GitHub repository
 
 ## Screenshots To Capture
 
@@ -43,6 +43,7 @@ Suggested file names:
 
 - `docs/screenshots/product-ui-desktop.png`
 - `docs/screenshots/product-ui-mobile.png`
+- `docs/screenshots/analytics-monitoring.png`
 - `docs/screenshots/analytics-monitoring.png`
 - `docs/screenshots/wallet-interactions.png`
 
