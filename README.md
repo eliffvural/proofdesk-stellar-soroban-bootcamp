@@ -2,6 +2,14 @@
 
 ProofDesk is a Stellar Soroban dApp for creating, revoking, and verifying on-chain document proofs with wallet-based ownership.
 
+## Quick Links
+
+- Live demo: <https://eliffvural.github.io/proofdesk-stellar-soroban-bootcamp/>
+- Public GitHub repository: <https://github.com/eliffvural/proofdesk-stellar-soroban-bootcamp>
+- Stellar Testnet contract: `CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI`
+- Contract explorer: <https://stellar.expert/explorer/testnet/contract/CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI>
+- Level 4 submission tracker: [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md)
+
 ## Project Name
 
 - ProofDesk Stellar
@@ -18,6 +26,18 @@ ProofDesk is a Stellar Soroban dApp for creating, revoking, and verifying on-cha
 
 ProofDesk lets users create tamper-resistant document proofs on Stellar Testnet. The app does not upload or store files. Instead, it creates a SHA-256 fingerprint from document text and stores that fingerprint with a title, owner wallet, timestamp, and active or revoked status in a Soroban smart contract. Anyone can verify whether a proof is valid for a specific wallet and hash. The owner can also revoke a proof if it should no longer be trusted.
 
+## Core Features
+
+- Connect Freighter wallet on Stellar Testnet.
+- Generate a local SHA-256 fingerprint from document text.
+- Save proof metadata on-chain through a Soroban smart contract.
+- Verify whether a wallet-owned proof is active.
+- Revoke proofs as the owner.
+- View wallet proof count, total proof count, and contract links.
+- Collect tester feedback in the app.
+- Track privacy-friendly analytics, monitoring events, and wallet interaction evidence locally.
+- Export a Level 4 evidence JSON for submission.
+
 ## Level 4 MVP Highlights
 
 - Production-minded onboarding flow for Freighter, Testnet checks, fingerprinting, proof creation, verification, revocation, and feedback.
@@ -25,6 +45,29 @@ ProofDesk lets users create tamper-resistant document proofs on Stellar Testnet.
 - Privacy-friendly analytics and monitoring event store with optional hosted endpoints.
 - Exportable Level 4 evidence snapshot for wallet interactions, analytics events, monitoring issues, and feedback.
 - Static deployment-ready Vite build with environment variables for RPC, analytics, feedback, and monitoring.
+
+## Level 4 Status
+
+| Requirement | Status |
+|---|---|
+| Production-ready MVP | Done |
+| Stable frontend and smart contract architecture | Done |
+| Mobile responsive UI | Done |
+| Loading states and error handling | Done |
+| Monitoring and analytics integration | Done |
+| Production deployment | Done |
+| Stellar Testnet contract deployment | Done |
+| Public GitHub repository | Done |
+| 15+ meaningful commits | Done |
+| Documentation | Done |
+| Product UI screenshots | Done |
+| Mobile screenshots | Done |
+| Analytics or monitoring screenshot | Done |
+| Demo video link | Pending real recording |
+| 10+ real user wallet interactions | Pending real testers |
+| Basic real user feedback summary | Pending real testers |
+
+The remaining pending items require real-world evidence and should not be fabricated.
 
 ## Product Validation Flow
 
@@ -62,6 +105,21 @@ I built ProofDesk to create a more practical smart contract project than a simpl
 - `get_proof_count(owner)` returns the owner's proof count.
 - `get_total_proofs()` returns total unique proofs.
 
+## Architecture
+
+```mermaid
+flowchart LR
+  User["User / Tester"] --> Freighter["Freighter Wallet"]
+  User --> Frontend["React + Vite Frontend"]
+  Frontend --> Hash["Local SHA-256 Hashing"]
+  Hash --> Contract["Soroban ProofDesk Contract"]
+  Freighter --> Contract
+  Contract --> Testnet["Stellar Testnet"]
+  Frontend --> Evidence["Local Analytics, Monitoring, Feedback, Evidence Export"]
+```
+
+The app keeps document content in the browser. Only the proof hash, title, owner wallet, timestamp, and active status are stored on-chain.
+
 ## Deployed Contract
 
 - Network: Stellar Testnet
@@ -76,6 +134,20 @@ Supporting guides:
 
 - [`docs/USER_TESTING_SCRIPT.md`](docs/USER_TESTING_SCRIPT.md)
 - [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)
+
+## Screenshots
+
+Desktop product UI:
+
+![ProofDesk desktop UI](docs/screenshots/product-ui-desktop.png)
+
+Mobile responsive UI:
+
+![ProofDesk mobile UI](docs/screenshots/product-ui-mobile.png)
+
+Analytics and monitoring panel:
+
+![ProofDesk analytics and monitoring](docs/screenshots/analytics-monitoring.png)
 
 ## Tech Stack
 
