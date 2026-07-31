@@ -565,10 +565,10 @@ export default function App() {
             <span />
             {network}
           </div>
-          <h1>ProofDesk</h1>
+          <h1>Private proof, public verification.</h1>
           <p className="hero-lede">
-            Create a private document fingerprint, anchor it on Stellar, and verify
-            trust without uploading the actual file.
+            Anchor document fingerprints on Stellar Testnet while keeping the original
+            content on your device.
           </p>
 
           <div className="hero-actions">
