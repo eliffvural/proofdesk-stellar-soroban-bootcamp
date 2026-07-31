@@ -9,12 +9,17 @@ import {
   ExternalLink,
   FileLock2,
   Fingerprint,
+  KeyRound,
   Loader2,
+  LockKeyhole,
   MessageSquare,
+  Network,
   Radar,
   RefreshCw,
   ShieldAlert,
   ShieldCheck,
+  Sparkles,
+  type LucideIcon,
   UsersRound,
   Wallet,
   XCircle,
@@ -195,6 +200,27 @@ export default function App() {
       label: "Verification",
       value: proofState,
       done: verified === true,
+    },
+  ];
+  const productHighlights: Array<{
+    label: string;
+    value: string;
+    icon: LucideIcon;
+  }> = [
+    {
+      label: "Private",
+      value: "Document stays local",
+      icon: LockKeyhole,
+    },
+    {
+      label: "On-chain",
+      value: "Soroban proof record",
+      icon: Network,
+    },
+    {
+      label: "Revocable",
+      value: "Owner can disable trust",
+      icon: KeyRound,
     },
   ];
   const onboardingTasks = [
@@ -507,8 +533,8 @@ export default function App() {
             <Fingerprint size={25} />
           </div>
           <div>
-            <p className="eyebrow">Private document proof</p>
-            <h1>ProofDesk</h1>
+            <p className="eyebrow">Stellar Testnet</p>
+            <strong className="brand-title">ProofDesk</strong>
           </div>
         </div>
 
@@ -524,19 +550,97 @@ export default function App() {
               <RefreshCw size={18} />
             </button>
           )}
-          <button
-            className="primary-button"
-            onClick={connectWallet}
-            disabled={isBusy}
-            type="button"
-          >
-            {isBusy ? <Loader2 className="spin" size={18} /> : <Wallet size={18} />}
-            {connected ? walletLabel : "Connect Freighter"}
-          </button>
+          <span className={connected ? "wallet-chip connected" : "wallet-chip"}>
+            <Wallet size={16} />
+            {connected ? walletLabel : "Testnet ready"}
+          </span>
         </div>
       </section>
 
       {error && <div className="error">{error}</div>}
+
+      <section className="hero-grid">
+        <article className="hero-copy">
+          <div className="live-pill">
+            <span />
+            {network}
+          </div>
+          <h1>ProofDesk</h1>
+          <p className="hero-lede">
+            Create a private document fingerprint, anchor it on Stellar, and verify
+            trust without uploading the actual file.
+          </p>
+
+          <div className="hero-actions">
+            <button
+              className="primary-button"
+              onClick={connectWallet}
+              disabled={isBusy}
+              type="button"
+            >
+              {isBusy ? <Loader2 className="spin" size={18} /> : <Wallet size={18} />}
+              {connected ? walletLabel : "Connect wallet"}
+            </button>
+            <a className="secondary-link" href={explorerUrl} target="_blank" rel="noreferrer">
+              Contract explorer <ExternalLink size={15} />
+            </a>
+          </div>
+
+          <div className="feature-grid">
+            {productHighlights.map(({ icon: Icon, label, value }) => (
+              <div className="feature-tile" key={label}>
+                <Icon size={18} />
+                <strong>{label}</strong>
+                <span>{value}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className={verified ? "proof-preview valid" : "proof-preview"}>
+          <div className="preview-top">
+            <div>
+              <p className="eyebrow">Live proof preview</p>
+              <h2>{activeProof?.title ?? title}</h2>
+            </div>
+            <span className={verified ? "status-badge valid" : "status-badge"}>
+              {proofState}
+            </span>
+          </div>
+
+          <div className="preview-visual">
+            <div className="seal-stack">
+              <div className="seal-ring">
+                {verified ? <ShieldCheck size={42} /> : <FileLock2 size={42} />}
+              </div>
+              <Sparkles size={18} />
+            </div>
+            <div className="hash-preview">
+              <span>Fingerprint</span>
+              <strong>
+                {activeProof?.proof_hash && activeProof.proof_hash !== "Not found"
+                  ? activeProof.proof_hash
+                  : proofHash || "Generate a hash to preview proof evidence."}
+              </strong>
+            </div>
+          </div>
+
+          <div className="metrics-grid">
+            <div>
+              <span>Your proofs</span>
+              <strong>{ownerProofCount}</strong>
+            </div>
+            <div>
+              <span>Total proofs</span>
+              <strong>{totalProofs}</strong>
+            </div>
+            <div>
+              <span>Contract</span>
+              <strong>{shortAddress(CONTRACT_ID)}</strong>
+            </div>
+          </div>
+        </article>
+      </section>
 
       <section className="flow-panel">
         {flowSteps.map((step, index) => (
@@ -548,40 +652,6 @@ export default function App() {
             </div>
           </div>
         ))}
-      </section>
-
-      <section className="overview">
-        <article className="certificate">
-          <div className="certificate-top">
-            <span>{network}</span>
-            <span>{proofState}</span>
-          </div>
-          <div className={verified ? "seal valid" : "seal"}>
-            {verified ? <ShieldCheck size={42} /> : <FileLock2 size={42} />}
-          </div>
-          <p className="eyebrow">Proof Status</p>
-          <h2>{activeProof?.title ?? title}</h2>
-          <p>
-            {activeProof?.proof_hash && activeProof.proof_hash !== "Not found"
-              ? activeProof.proof_hash
-              : proofHash || "Generate or enter a document fingerprint."}
-          </p>
-        </article>
-
-        <aside className="metrics">
-          <div>
-            <span>Your Proofs</span>
-            <strong>{ownerProofCount}</strong>
-          </div>
-          <div>
-            <span>Total Proofs</span>
-            <strong>{totalProofs}</strong>
-          </div>
-          <div>
-            <span>Contract</span>
-            <strong>{shortAddress(CONTRACT_ID)}</strong>
-          </div>
-        </aside>
       </section>
 
       <section className="workspace">
