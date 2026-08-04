@@ -5,6 +5,12 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      deploy_contract:
+        description: Deploy the ProofDesk contract to Stellar Testnet
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -78,7 +84,8 @@ jobs:
         with:
           path: frontend/dist
 
-  deploy:
+  deploy-frontend-pages:
+    name: Deploy frontend to GitHub Pages
     needs:
       - build
       - contract
@@ -90,3 +97,64 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+  deploy-contract-testnet:
+    name: Deploy contract to Stellar Testnet
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_contract }}
+    needs: contract
+    runs-on: ubuntu-latest
+    environment:
+      name: stellar-testnet
+    env:
+      STELLAR_CLI_VERSION: 27.1.0
+      STELLAR_RPC_URL: https://soroban-testnet.stellar.org
+      STELLAR_NETWORK_PASSPHRASE: "Test SDF Network ; September 2015"
+      STELLAR_TESTNET_SECRET_KEY: ${{ secrets.STELLAR_TESTNET_SECRET_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32v1-none
+
+      - name: Install Stellar CLI
+        run: |
+          curl -fsSL "https://github.com/stellar/stellar-cli/releases/download/v${STELLAR_CLI_VERSION}/stellar-cli-${STELLAR_CLI_VERSION}-x86_64-unknown-linux-gnu.tar.gz" -o stellar-cli.tar.gz
+          tar -xzf stellar-cli.tar.gz
+          sudo install -m 0755 stellar /usr/local/bin/stellar
+          stellar --version
+
+      - name: Verify Testnet deployment secret
+        run: |
+          if [ -z "${STELLAR_TESTNET_SECRET_KEY}" ]; then
+            echo "::error::Set the STELLAR_TESTNET_SECRET_KEY repository secret before running the Testnet contract deployment."
+            exit 1
+          fi
+
+      - name: Build Soroban contract WASM
+        run: stellar contract build
+
+      - name: Deploy contract to Testnet
+        id: contract-deployment
+        run: |
+          set -euo pipefail
+          CONTRACT_ID="$(stellar -q contract deploy \
+            --wasm target/wasm32v1-none/release/proofdesk.wasm \
+            --source-account "${STELLAR_TESTNET_SECRET_KEY}" \
+            --rpc-url "${STELLAR_RPC_URL}" \
+            --network-passphrase "${STELLAR_NETWORK_PASSPHRASE}" \
+            --alias proofdesk \
+            | tail -n 1)"
+          if [ -z "${CONTRACT_ID}" ]; then
+            echo "::error::Contract deployment did not return a contract ID."
+            exit 1
+          fi
+          echo "contract_id=${CONTRACT_ID}" >> "${GITHUB_OUTPUT}"
+          {
+            echo "### Stellar Testnet Contract Deployment"
+            echo
+            echo "- Contract ID: \`${CONTRACT_ID}\`"
+            echo "- Explorer: https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}"
+          } >> "${GITHUB_STEP_SUMMARY}"

@@ -216,7 +216,8 @@ The analytics, feedback, and monitoring endpoints are optional. When left empty,
 
 ## Production Deployment
 
-The repository includes a GitHub Pages workflow at `.github/workflows/pages.yml`.
+The repository includes a GitHub Actions workflow at `.github/workflows/pages.yml`.
+It validates the Soroban contract with Rust and Stellar CLI, builds the frontend, deploys the frontend to GitHub Pages, and includes a manual `deploy-contract-testnet` job for Stellar Testnet contract deployment when `STELLAR_TESTNET_SECRET_KEY` is configured.
 After the changes are pushed to `main`, the live app should be available at:
 
 <https://eliffvural.github.io/proofdesk-stellar-soroban-bootcamp/>
