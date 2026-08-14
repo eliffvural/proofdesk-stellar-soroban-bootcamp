@@ -37,6 +37,7 @@ export interface FeedbackItem {
   id: string;
   wallet: string;
   name: string;
+  email?: string;
   useCase: string;
   rating: number;
   notes: string;
@@ -191,12 +192,45 @@ export function submitFeedback(input: Omit<FeedbackItem, "id" | "occurredAt">) {
 
   trackEvent("feedback_submitted", {
     wallet: input.wallet,
+    hasEmail: Boolean(input.email),
     rating: input.rating,
     useCase: input.useCase,
   });
   void sendToEndpoint(getEndpoint("VITE_FEEDBACK_ENDPOINT"), feedback).catch(() => undefined);
 
   return feedback;
+}
+
+function csvCell(value: unknown) {
+  const normalized = value === null || value === undefined ? "" : String(value);
+  return `"${normalized.replace(/"/g, '""')}"`;
+}
+
+export function buildFeedbackCsv() {
+  const rows = getFeedbackItems().map((item) => [
+    item.occurredAt,
+    item.name,
+    item.email ?? "",
+    item.wallet,
+    item.useCase,
+    item.rating,
+    item.notes,
+  ]);
+
+  return [
+    [
+      "Timestamp",
+      "Name",
+      "Email",
+      "Wallet Address",
+      "Use Case",
+      "Product Rating",
+      "Product Feedback",
+    ],
+    ...rows,
+  ]
+    .map((row) => row.map(csvCell).join(","))
+    .join("\n");
 }
 
 export function captureError(error: unknown, context: Record<string, JsonValue> = {}) {
@@ -221,14 +255,21 @@ export function buildSubmissionSnapshot() {
   const analytics = getAnalyticsEvents();
   const monitoring = getMonitoringIssues();
   const uniqueWallets = new Set(interactions.map((item) => item.wallet)).size;
+  const uniqueSignedWallets = new Set(
+    interactions.filter((item) => item.action !== "verify_proof").map((item) => item.wallet),
+  ).size;
   const averageRating =
     feedback.length === 0
       ? 0
       : feedback.reduce((total, item) => total + item.rating, 0) / feedback.length;
 
   return {
+    level: "Level 5 - Blue Belt",
     generatedAt: new Date().toISOString(),
+    targetUsers: 50,
     uniqueWallets,
+    uniqueSignedWallets,
+    targetProgress: Number(Math.min(1, uniqueSignedWallets / 50).toFixed(2)),
     interactionCount: interactions.length,
     feedbackCount: feedback.length,
     averageRating: Number(averageRating.toFixed(2)),

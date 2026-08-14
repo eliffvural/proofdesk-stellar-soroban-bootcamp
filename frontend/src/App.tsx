@@ -12,6 +12,7 @@ import {
   KeyRound,
   Loader2,
   LockKeyhole,
+  Mail,
   MessageSquare,
   Network,
   Radar,
@@ -38,6 +39,7 @@ import {
 } from "./lib/proofdesk";
 import type { Proof } from "./lib/proofdesk";
 import {
+  buildFeedbackCsv,
   buildSubmissionSnapshot,
   captureError,
   getAnalyticsEvents,
@@ -57,6 +59,7 @@ import type {
 
 const explorerUrl = `https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}`;
 const labUrl = `https://lab.stellar.org/r/testnet/contract/${CONTRACT_ID}`;
+const levelTargetUsers = 50;
 const sampleText =
   "ProofDesk sample document\nOwner: Stellar Bootcamp\nPurpose: On-chain proof demo";
 
@@ -127,6 +130,16 @@ function downloadJson(filename: string, payload: unknown) {
   URL.revokeObjectURL(url);
 }
 
+function downloadText(filename: string, payload: string, type: string) {
+  const blob = new Blob([payload], { type });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function App() {
   const [address, setAddress] = useState("");
   const [network, setNetwork] = useState("TESTNET");
@@ -143,6 +156,7 @@ export default function App() {
   const [error, setError] = useState("");
   const [isBusy, setIsBusy] = useState(false);
   const [feedbackName, setFeedbackName] = useState("");
+  const [feedbackEmail, setFeedbackEmail] = useState("");
   const [feedbackUseCase, setFeedbackUseCase] = useState("Certificate verification");
   const [feedbackRating, setFeedbackRating] = useState(5);
   const [feedbackNotes, setFeedbackNotes] = useState("");
@@ -171,11 +185,20 @@ export default function App() {
   const canVerify =
     connected && Boolean(verifyOwner.trim()) && Boolean(verifyHash.trim()) && !isBusy;
   const canRevoke = connected && Boolean(selectedHash) && !isBusy;
-  const uniqueWalletCount = new Set(walletInteractions.map((item) => item.wallet)).size;
   const signedInteractionCount = walletInteractions.filter(
     (item) => item.action !== "verify_proof",
   ).length;
-  const validationProgress = Math.min(100, Math.round((uniqueWalletCount / 10) * 100));
+  const uniqueWalletCount = new Set(walletInteractions.map((item) => item.wallet)).size;
+  const uniqueSignedWalletCount = new Set(
+    walletInteractions
+      .filter((item) => item.action !== "verify_proof")
+      .map((item) => item.wallet),
+  ).size;
+  const validationProgress = Math.min(
+    100,
+    Math.round((uniqueSignedWalletCount / levelTargetUsers) * 100),
+  );
+  const remainingWallets = Math.max(0, levelTargetUsers - uniqueSignedWalletCount);
   const latestInteraction = walletInteractions[walletInteractions.length - 1];
   const latestFeedback = feedbackItems[feedbackItems.length - 1];
   const averageFeedback =
@@ -243,6 +266,11 @@ export default function App() {
       label: "Feedback",
       value: feedbackItems.length ? `${feedbackItems.length} responses` : "Collect after demo",
       done: feedbackItems.length > 0,
+    },
+    {
+      label: "Level 5 target",
+      value: remainingWallets ? `${remainingWallets} wallets remaining` : "50+ users ready",
+      done: uniqueSignedWalletCount >= levelTargetUsers,
     },
   ];
 
@@ -505,24 +533,38 @@ export default function App() {
     submitFeedback({
       wallet: address || verifyOwner || "Wallet not connected",
       name: feedbackName.trim() || "Anonymous tester",
+      email: feedbackEmail.trim(),
       useCase: feedbackUseCase.trim() || "Document proof",
       rating: feedbackRating,
       notes: feedbackNotes.trim(),
     });
     setFeedbackNotes("");
-    setOpsMessage("Feedback saved for Level 4 validation");
+    setOpsMessage("Feedback saved for Level 5 validation");
     syncOpsState();
   }
 
   function exportEvidence() {
-    downloadJson("proofdesk-level4-evidence.json", buildSubmissionSnapshot());
+    downloadJson("proofdesk-level5-evidence.json", buildSubmissionSnapshot());
     trackEvent("evidence_exported", {
       uniqueWallets: uniqueWalletCount,
       interactionCount: walletInteractions.length,
       feedbackCount: feedbackItems.length,
+      level: "level5",
     });
     syncOpsState();
     setOpsMessage("Submission evidence exported");
+  }
+
+  function exportFeedbackCsv() {
+    downloadText("proofdesk-level5-feedback-export.csv", buildFeedbackCsv(), "text/csv");
+    trackEvent("evidence_exported", {
+      uniqueWallets: uniqueWalletCount,
+      feedbackCount: feedbackItems.length,
+      artifact: "feedback_csv",
+      level: "level5",
+    });
+    syncOpsState();
+    setOpsMessage("Feedback CSV exported");
   }
 
   return (
@@ -829,9 +871,9 @@ export default function App() {
       <details className="validation-drawer">
         <summary>
           <span>
-            <strong>Level 4 validation</strong>
+            <strong>Level 5 growth validation</strong>
             <small>
-              {uniqueWalletCount}/10 wallets, {feedbackItems.length} feedback responses
+              {uniqueSignedWalletCount}/{levelTargetUsers} signed wallets, {feedbackItems.length} feedback responses
             </small>
           </span>
           <ClipboardCheck size={18} />
@@ -841,18 +883,18 @@ export default function App() {
           <article className="panel onboarding-panel">
             <div className="panel-heading">
               <div>
-                <p className="eyebrow">Level 4 Launch</p>
-                <h3>User onboarding</h3>
+                <p className="eyebrow">Level 5 Growth</p>
+                <h3>50-user onboarding</h3>
               </div>
               <ClipboardCheck size={20} />
             </div>
 
             <div className="validation-progress">
               <div>
-                <strong>{uniqueWalletCount}/10</strong>
-                <span>real wallets onboarded</span>
+                <strong>{uniqueSignedWalletCount}/{levelTargetUsers}</strong>
+                <span>real wallets with signed Testnet activity</span>
               </div>
-              <div className="progress-meter" aria-label="10 wallet onboarding progress">
+              <div className="progress-meter" aria-label="50 wallet onboarding progress">
                 <span style={{ width: `${validationProgress}%` }} />
               </div>
             </div>
@@ -922,7 +964,11 @@ export default function App() {
 
             <button className="secondary-button full-button" onClick={exportEvidence} type="button">
               <Download size={18} />
-              Export Level 4 evidence
+              Export Level 5 evidence
+            </button>
+            <button className="secondary-button full-button stacked-button" onClick={exportFeedbackCsv} type="button">
+              <Download size={18} />
+              Export feedback CSV
             </button>
           </article>
 
@@ -942,6 +988,19 @@ export default function App() {
                 onChange={(event) => setFeedbackName(event.target.value)}
                 placeholder="Name or team"
               />
+            </label>
+
+            <label>
+              Tester email
+              <div className="input-with-icon">
+                <Mail size={17} />
+                <input
+                  value={feedbackEmail}
+                  onChange={(event) => setFeedbackEmail(event.target.value)}
+                  placeholder="name@example.com"
+                  type="email"
+                />
+              </div>
             </label>
 
             <label>
