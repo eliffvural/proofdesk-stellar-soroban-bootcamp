@@ -1,6 +1,6 @@
-# ProofDesk User Testing Script
+# ProofDesk Level 5 User Testing Script
 
-Use this script for each real Level 4 tester. Keep the session short and collect one wallet interaction plus one feedback entry per tester.
+Use this script for each real Level 5 tester. Keep the session short and collect one signed Testnet transaction plus one feedback entry per tester. The Level 5 target is 50+ real testers with active usage proof.
 
 ## Tester Setup
 
@@ -18,8 +18,10 @@ Use this script for each real Level 4 tester. Keep the session short and collect
 5. Create an on-chain proof and approve the wallet signature.
 6. Verify the generated proof.
 7. Open the explorer link if the tester wants to inspect the contract.
-8. Save feedback in the User Feedback panel.
-9. Export the Level 4 evidence JSON after the session.
+8. Copy the transaction hash or Stellar explorer URL.
+9. Submit the Level 5 Google Form with name, email, wallet address, transaction hash, rating, and feedback.
+10. Save the same feedback in the in-app User Feedback panel when possible.
+11. Export the Level 5 evidence JSON/CSV after each testing batch.
 
 ## Feedback Questions
 
@@ -33,9 +35,12 @@ Use this script for each real Level 4 tester. Keep the session short and collect
 ## Evidence To Record
 
 - Tester name or alias
+- Tester email
 - Public wallet address
-- Action completed: `create_proof`, `verify_proof`, or `revoke_proof`
+- Signed action completed: `create_proof` or `revoke_proof`
 - Proof hash
 - Transaction hash or explorer URL when available
 - Rating from 1 to 5
 - One-sentence feedback summary
+
+Do not count read-only `verify_proof` checks as a Level 5 onboarded user unless the same wallet also signs a Testnet transaction.

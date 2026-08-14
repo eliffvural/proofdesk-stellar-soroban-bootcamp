@@ -8,6 +8,11 @@ ProofDesk is a Stellar Soroban dApp for creating, revoking, and verifying on-cha
 - Public GitHub repository: <https://github.com/eliffvural/proofdesk-stellar-soroban-bootcamp>
 - Stellar Testnet contract: `CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI`
 - Contract explorer: <https://stellar.expert/explorer/testnet/contract/CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI>
+- Level 5 submission tracker: [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md)
+- Level 5 pitch deck/PPT: [`docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx`](docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx)
+- Level 5 feedback Excel workbook: [`docs/evidence/proofdesk-level5-user-feedback.xlsx`](docs/evidence/proofdesk-level5-user-feedback.xlsx)
+- Level 5 Google Form: `TODO: paste live Google Form URL`
+- Level 5 demo video: `TODO: paste final walkthrough URL`
 - Level 4 submission tracker: [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md)
 
 ## Project Name
@@ -36,7 +41,7 @@ ProofDesk lets users create tamper-resistant document proofs on Stellar Testnet.
 - View wallet proof count, total proof count, and contract links.
 - Collect tester feedback in the app.
 - Track privacy-friendly analytics, monitoring events, and wallet interaction evidence locally.
-- Export a Level 4 evidence JSON for submission.
+- Export Level 5 evidence JSON and feedback CSV for submission analysis.
 
 ## Level 4 MVP Highlights
 
@@ -68,6 +73,55 @@ ProofDesk lets users create tamper-resistant document proofs on Stellar Testnet.
 | Basic real user feedback summary | Pending real testers |
 
 The remaining pending items require real-world evidence and should not be fabricated.
+
+## Level 5 Blue Belt Status
+
+ProofDesk now has the Level 5 submission structure for user growth, product iteration, and presentation/demo review.
+
+| Requirement | Status | Evidence |
+|---|---|---|
+| Public GitHub repository | Ready | <https://github.com/eliffvural/proofdesk-stellar-soroban-bootcamp> |
+| Minimum 20+ meaningful commits | Ready | Repository has 25+ commits after the Level 5 growth iteration |
+| Live deployed application | Ready | <https://eliffvural.github.io/proofdesk-stellar-soroban-bootcamp/> |
+| Pitch deck/PPT | Ready | [`docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx`](docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx) |
+| Feedback Excel export | Ready | [`docs/evidence/proofdesk-level5-user-feedback.xlsx`](docs/evidence/proofdesk-level5-user-feedback.xlsx) |
+| Google Form | Needs live URL | Use [`docs/LEVEL5_GOOGLE_FORM.md`](docs/LEVEL5_GOOGLE_FORM.md) |
+| Demo video | Needs recording | Use [`docs/LEVEL5_DEMO_SCRIPT.md`](docs/LEVEL5_DEMO_SCRIPT.md) |
+| 50+ testnet users | Pending real testers | Fill the feedback workbook with real responses |
+| Real transaction activity | Pending real testers | Count wallets with signed `create_proof` or `revoke_proof` transactions |
+| Analytics or transaction screenshots | Pending final capture | Add final screenshots after the tester cohort |
+
+Do not fabricate the 50-user requirement. The final submission should include only real wallets, real Testnet transaction links, and real feedback.
+
+## Level 5 User Onboarding and Feedback Collection
+
+Create a Google Form using [`docs/LEVEL5_GOOGLE_FORM.md`](docs/LEVEL5_GOOGLE_FORM.md). It must collect:
+
+- Wallet address
+- Email
+- Name
+- Testnet transaction hash or explorer URL
+- Use case tested
+- Product rating from 1 to 5
+- Written product feedback
+
+Export the Google Form responses to Excel and use [`docs/evidence/proofdesk-level5-user-feedback.xlsx`](docs/evidence/proofdesk-level5-user-feedback.xlsx) for analysis and record-keeping. The workbook includes a `Form Responses` sheet, `Analysis` sheet, and `Improvement Backlog` sheet.
+
+## Level 5 Feedback-Driven Improvement Plan
+
+Initial Level 5 product iteration:
+
+- Commit: [`c53d1762b97e2b492f5d79be0dde23a81d612ef5`](https://github.com/eliffvural/proofdesk-stellar-soroban-bootcamp/commit/c53d1762b97e2b492f5d79be0dde23a81d612ef5)
+- What changed: the in-app validation panel now targets 50 signed Testnet wallets, captures tester email, exports Level 5 JSON evidence, and exports feedback CSV.
+- Why it matters: Level 5 requires larger user onboarding, active usage proof, and feedback analysis; this update turns ProofDesk from a Level 4 validation panel into a growth-readiness workflow.
+
+Next phase improvements should be selected from the real Google Form feedback:
+
+1. If testers struggle with wallet/Testnet setup, improve onboarding copy and add a shorter guided checklist.
+2. If testers want easier verification sharing, add a shareable verification certificate or proof link.
+3. If testers create multiple proofs, add proof history, saved hashes, and batch proof creation.
+4. If analytics are hard to compile, add a hosted collection endpoint for feedback, monitoring, and wallet events.
+5. If stability issues appear, fix the top captured monitoring errors and link each fix commit in this section.
 
 ## Product Validation Flow
 
@@ -134,6 +188,9 @@ Supporting guides:
 
 - [`docs/USER_TESTING_SCRIPT.md`](docs/USER_TESTING_SCRIPT.md)
 - [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)
+- [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md)
+- [`docs/LEVEL5_GOOGLE_FORM.md`](docs/LEVEL5_GOOGLE_FORM.md)
+- [`docs/LEVEL5_DEMO_SCRIPT.md`](docs/LEVEL5_DEMO_SCRIPT.md)
 
 ## Screenshots
 
