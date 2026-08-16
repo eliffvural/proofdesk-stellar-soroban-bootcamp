@@ -115,6 +115,12 @@ Initial Level 5 product iteration:
 - What changed: the in-app validation panel now targets 50 signed Testnet wallets, captures tester email, exports Level 5 JSON evidence, and exports feedback CSV.
 - Why it matters: Level 5 requires larger user onboarding, active usage proof, and feedback analysis; this update turns ProofDesk from a Level 4 validation panel into a growth-readiness workflow.
 
+Level 5 product polish iteration:
+
+- Commit: [`27d5bc3cc9cbdebd4aaf10d8db694a9ee3a1877a`](https://github.com/eliffvural/proofdesk-stellar-soroban-bootcamp/commit/27d5bc3cc9cbdebd4aaf10d8db694a9ee3a1877a)
+- What changed: the frontend now has a stronger product landing experience, sticky section navigation, Level 5 metric cards, use-case cards, architecture storytelling, roadmap cards, a more prominent growth validation panel, and refreshed desktop/mobile screenshots.
+- Why it matters: Level 5 review is not only technical; the project now presents better for testers, demo viewers, and ecosystem judges while keeping the create/verify/revoke flow clear.
+
 Next phase improvements should be selected from the real Google Form feedback:
 
 1. If testers struggle with wallet/Testnet setup, improve onboarding copy and add a shorter guided checklist.
