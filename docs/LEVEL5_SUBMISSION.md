@@ -18,12 +18,12 @@
 | Requirement | Status | Evidence |
 |---|---|---|
 | Public GitHub repository | Ready | Repository link above |
-| Minimum 20+ meaningful commits | Ready | Current repository has 25+ commits after Level 5 iteration work |
+| Minimum 20+ meaningful commits | Ready | Repository meets the Level 5 minimum 20+ meaningful commits requirement |
 | Live deployed application | Ready | GitHub Pages link above |
-| Minimum 50 testnet users onboarded | Pending real testers | Use the feedback workbook and transaction proof table |
+| Minimum 50+ testnet users onboarded | Pending real testers | Use the feedback workbook and transaction proof table |
 | Real transaction activity | Pending real testers | Count only wallets with signed `create_proof` or `revoke_proof` transactions |
 | Active usage proof | Pending real testers | Add Stellar explorer transaction links and final screenshots |
-| New feature based on feedback | Ready | Level 5 growth dashboard, email capture, signed-wallet target, JSON/CSV export |
+| New feature based on feedback | Ready structure / pending real feedback | Level 5 growth dashboard, email capture, signed-wallet target, JSON/CSV export |
 | UX/UI and onboarding improvements | Ready | In-app Level 5 dashboard and updated testing script |
 | Product stability | Ready for collection | Monitoring issue export remains available in the app |
 | Professional pitch deck/PPT | Ready | Pitch deck link above |
