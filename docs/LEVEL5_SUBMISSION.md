@@ -10,15 +10,17 @@
 - Contract explorer: https://stellar.expert/explorer/testnet/contract/CAWMSCBHY4KJYSPOWPEPF2WNBHN6A2DNS5OS55ACV66CKWQP4GIDZEKI
 - Pitch deck/PPT: [`docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx`](pitch/ProofDesk_Level5_Pitch_Deck.pptx)
 - Feedback Excel workbook: [`docs/evidence/proofdesk-level5-user-feedback.xlsx`](evidence/proofdesk-level5-user-feedback.xlsx)
-- Google Form: `TODO: paste live Google Form URL`
-- Demo video: `TODO: paste final walkthrough URL`
+- Transaction evidence template: [`docs/evidence/level5-transaction-evidence-template.csv`](evidence/level5-transaction-evidence-template.csv)
+- Commit evidence: [`docs/level5/COMMIT_EVIDENCE.md`](level5/COMMIT_EVIDENCE.md)
+- Google Form: `TODO: paste live Google Form URL before resubmission`
+- Demo video: `TODO: paste final walkthrough URL before resubmission`
 
 ## Level 5 Checklist
 
 | Requirement | Status | Evidence |
 |---|---|---|
 | Public GitHub repository | Ready | Repository link above |
-| Minimum 20+ meaningful commits | Ready | Repository meets the Level 5 minimum 20+ meaningful commits requirement |
+| Minimum 20+ meaningful commits for Level 5 | Ready | Level 5 work has 20+ dedicated commits; see [`docs/level5/COMMIT_EVIDENCE.md`](level5/COMMIT_EVIDENCE.md) |
 | Live deployed application | Ready | GitHub Pages link above |
 | Minimum 50+ testnet users onboarded | Pending real testers | Use the feedback workbook and transaction proof table |
 | Real transaction activity | Pending real testers | Count only wallets with signed `create_proof` or `revoke_proof` transactions |
@@ -32,6 +34,20 @@
 | User feedback iteration summary | Ready structure / pending real data | See improvement section below |
 
 The pending items require real user participation and should not be fabricated.
+
+## Level 5 Evidence Guides
+
+| Guide | Purpose |
+|---|---|
+| [`docs/level5/RESUBMISSION_CHECKLIST.md`](level5/RESUBMISSION_CHECKLIST.md) | Final Level 5 resubmission checklist |
+| [`docs/level5/COMMIT_EVIDENCE.md`](level5/COMMIT_EVIDENCE.md) | 20+ Level 5 commit evidence |
+| [`docs/level5/USER_COHORT_EVIDENCE.md`](level5/USER_COHORT_EVIDENCE.md) | 50+ user evidence rules |
+| [`docs/level5/TRANSACTION_ACTIVITY_PROOF.md`](level5/TRANSACTION_ACTIVITY_PROOF.md) | Real transaction proof rules |
+| [`docs/level5/GOOGLE_FORM_FIELD_MAP.md`](level5/GOOGLE_FORM_FIELD_MAP.md) | Google Form field mapping |
+| [`docs/level5/EXCEL_EXPORT_ANALYSIS.md`](level5/EXCEL_EXPORT_ANALYSIS.md) | Excel response analysis guide |
+| [`docs/level5/FEEDBACK_ITERATION_SUMMARY.md`](level5/FEEDBACK_ITERATION_SUMMARY.md) | User feedback iteration summary template |
+| [`docs/level5/DEMO_VIDEO_CHECKLIST.md`](level5/DEMO_VIDEO_CHECKLIST.md) | Full walkthrough/demo checklist |
+| [`docs/level5/ANALYTICS_SCREENSHOT_CHECKLIST.md`](level5/ANALYTICS_SCREENSHOT_CHECKLIST.md) | Analytics/transaction screenshot checklist |
 
 ## User Onboarding Evidence Rules
 

@@ -11,8 +11,10 @@ ProofDesk is a Stellar Soroban dApp for creating, revoking, and verifying on-cha
 - Level 5 submission tracker: [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md)
 - Level 5 pitch deck/PPT: [`docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx`](docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx)
 - Level 5 feedback Excel workbook: [`docs/evidence/proofdesk-level5-user-feedback.xlsx`](docs/evidence/proofdesk-level5-user-feedback.xlsx)
-- Level 5 Google Form: `TODO: paste live Google Form URL`
-- Level 5 demo video: `TODO: paste final walkthrough URL`
+- Level 5 transaction evidence template: [`docs/evidence/level5-transaction-evidence-template.csv`](docs/evidence/level5-transaction-evidence-template.csv)
+- Level 5 commit evidence: [`docs/level5/COMMIT_EVIDENCE.md`](docs/level5/COMMIT_EVIDENCE.md)
+- Level 5 Google Form: `TODO: paste live Google Form URL before resubmission`
+- Level 5 demo video: `TODO: paste final walkthrough URL before resubmission`
 
 ## Project Name
 
@@ -49,7 +51,7 @@ ProofDesk is prepared specifically for the Level 5 Blue Belt requirements: user 
 | Requirement | Status | Evidence |
 |---|---|---|
 | Public GitHub repository | Ready | <https://github.com/eliffvural/proofdesk-stellar-soroban-bootcamp> |
-| Minimum 20+ meaningful commits | Ready | Repository meets the Level 5 minimum 20+ meaningful commits requirement |
+| Minimum 20+ meaningful commits for Level 5 | Ready | Level 5 work has 20+ dedicated commits; see [`docs/level5/COMMIT_EVIDENCE.md`](docs/level5/COMMIT_EVIDENCE.md) |
 | Live deployed application | Ready | <https://eliffvural.github.io/proofdesk-stellar-soroban-bootcamp/> |
 | Pitch deck/PPT | Ready | [`docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx`](docs/pitch/ProofDesk_Level5_Pitch_Deck.pptx) |
 | Feedback Excel export | Ready | [`docs/evidence/proofdesk-level5-user-feedback.xlsx`](docs/evidence/proofdesk-level5-user-feedback.xlsx) |
@@ -64,6 +66,19 @@ ProofDesk is prepared specifically for the Level 5 Blue Belt requirements: user 
 | Screenshots of analytics or transaction activity | Pending final capture | Add final screenshots after the 50+ tester cohort |
 
 Do not fabricate the 50-user requirement. The final submission should include only real wallets, real Testnet transaction links, and real feedback.
+
+## Level 5 Evidence Guides
+
+- Resubmission checklist: [`docs/level5/RESUBMISSION_CHECKLIST.md`](docs/level5/RESUBMISSION_CHECKLIST.md)
+- 50+ user evidence rules: [`docs/level5/USER_COHORT_EVIDENCE.md`](docs/level5/USER_COHORT_EVIDENCE.md)
+- Transaction activity proof rules: [`docs/level5/TRANSACTION_ACTIVITY_PROOF.md`](docs/level5/TRANSACTION_ACTIVITY_PROOF.md)
+- Google Form field map: [`docs/level5/GOOGLE_FORM_FIELD_MAP.md`](docs/level5/GOOGLE_FORM_FIELD_MAP.md)
+- Excel export analysis guide: [`docs/level5/EXCEL_EXPORT_ANALYSIS.md`](docs/level5/EXCEL_EXPORT_ANALYSIS.md)
+- Feedback iteration template: [`docs/level5/FEEDBACK_ITERATION_SUMMARY.md`](docs/level5/FEEDBACK_ITERATION_SUMMARY.md)
+- Demo video checklist: [`docs/level5/DEMO_VIDEO_CHECKLIST.md`](docs/level5/DEMO_VIDEO_CHECKLIST.md)
+- Pitch deck requirement map: [`docs/level5/PITCH_DECK_REQUIREMENT_MAP.md`](docs/level5/PITCH_DECK_REQUIREMENT_MAP.md)
+- Analytics/transaction screenshot checklist: [`docs/level5/ANALYTICS_SCREENSHOT_CHECKLIST.md`](docs/level5/ANALYTICS_SCREENSHOT_CHECKLIST.md)
+- Final resubmission packet: [`docs/level5/FINAL_RESUBMISSION_PACKET.md`](docs/level5/FINAL_RESUBMISSION_PACKET.md)
 
 ## Level 5 User Onboarding and Feedback Collection
 
